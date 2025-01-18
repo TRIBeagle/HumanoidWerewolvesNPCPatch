@@ -8,11 +8,6 @@
     "HNWMain.esp"
   ],
   "TargetedReleases": [
-    "SkyrimLE",
-    "SkyrimSE",
-    "SkyrimVR",
-    "EnderalLE",
-    "EnderalSE",
-    "SkyrimSEGog"
+    "SkyrimSE"
   ]
 }
