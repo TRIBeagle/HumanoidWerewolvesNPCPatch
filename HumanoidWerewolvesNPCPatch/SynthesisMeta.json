@@ -1,0 +1,18 @@
+{
+  "Nickname": "HumanoidWerewolvesNPCPatch",
+  "Visibility": "Visible",
+  "OneLineDescription": "An addon patch for Humanoid Werewolves. Changes NPC werewolves to use an NPC-specific werewolf race.",
+  "LongDescription": "이 패치는 Humanoid Werewolves 모드의 애드온 패치로, NPC 늑대인간을 플레이어 캐릭터와 구분되는 전용 종족인 NPCWerewolfBeastRace로 변경합니다. 이를 통해 플레이어와 NPC 늑대인간을 분리하여 수정하기 위함입니다. 이 패치는 HNWMain.esp 이전까지의 모든 WerewolfBeastRace 수정사항을 기반으로 적용됩니다.\r\n\r\nThis patch is an addon for the Humanoid Werewolves mod, changing NPC werewolves to a dedicated race called NPCWerewolfBeastRace, separate from the player's werewolf race. This allows for separating and modifying the behaviors and appearances of NPC werewolves independently from the player. The patch is based on all modifications to WerewolfBeastRace made up to HNWMain.esp.",
+  "PreferredAutoVersioning": "Default",
+  "RequiredMods": [
+    "HNWMain.esp"
+  ],
+  "TargetedReleases": [
+    "SkyrimLE",
+    "SkyrimSE",
+    "SkyrimVR",
+    "EnderalLE",
+    "EnderalSE",
+    "SkyrimSEGog"
+  ]
+}
