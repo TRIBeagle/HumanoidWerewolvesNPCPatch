@@ -76,7 +76,7 @@ namespace HumanoidWerewolvesNPCPatch
             hnwNpcWerewolfBeastRace.Description = "Werewolf Race for NPC";
             hnwNpcWerewolfBeastRace.MorphRace.SetTo(werewolfBeastRaceKey);
             hnwNpcWerewolfBeastRace.ArmorRace.SetTo(werewolfBeastRaceKey);
-            Console.WriteLine("HNW_NPCWerewolfBeastRace EditorID, description, Morph Race, and Armor Race values have been updated.\n");
+            Console.WriteLine("NPCWerewolfBeastRace EditorID, description, Morph Race, and Armor Race values have been updated.\n");
 
             // WerewolfBeastRace를 사용하는 NPC의 Race 변경
             var npcsToPatch = state.LoadOrder.PriorityOrder.Npc()
