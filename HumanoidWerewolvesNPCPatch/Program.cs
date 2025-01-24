@@ -72,7 +72,7 @@ namespace HumanoidWerewolvesNPCPatch
             hnwNpcWerewolfBeastRace.DeepCopyIn(werewolfBeastRace);
 
             // EditorID와 설명, Morph Race와 Armor Race 값 재설정
-            hnwNpcWerewolfBeastRace.EditorID = "HNW_NPCWerewolfBeastRace";
+            hnwNpcWerewolfBeastRace.EditorID = "WerewolvesFailSafe"; More Nasty Critters 인식용 ID
             hnwNpcWerewolfBeastRace.Description = "Werewolf Race for NPC";
             hnwNpcWerewolfBeastRace.MorphRace.SetTo(werewolfBeastRaceKey);
             hnwNpcWerewolfBeastRace.ArmorRace.SetTo(werewolfBeastRaceKey);
