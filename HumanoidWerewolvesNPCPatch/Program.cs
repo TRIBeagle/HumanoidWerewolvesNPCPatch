@@ -103,13 +103,11 @@ namespace HumanoidWerewolvesNPCPatch
                 var patchedNpc = state.PatchMod.Npcs.GetOrAddAsOverride(npc);
                 patchedNpc.Race.SetTo(hnwNpcWerewolfBeastRace.FormKey);
 
-                // NPC EditorID와 FormKey, 수정된 Index 출력
+                // NPC EditorID와 FormKey 출력
                 var npcEditorID = npc.EditorID ?? "Unknown EditorID";
                 var npcFormKey = npc.FormKey.ToString();
-                var npcModKey = selectedNpcContext.ModKey;
-                var npcModIndex = state.LoadOrder.IndexOf(npcModKey);
 
-                Console.WriteLine($"Patched NPC - EditorID: {npcEditorID}, FormID: {npcFormKey}, Patched at Index: {npcModIndex}");
+                Console.WriteLine($"Patched NPC - EditorID: {npcEditorID}, FormID: {npcFormKey}");
             }
 
             Console.WriteLine($"\nTotal {npcsToPatch.Count} NPCs have been patched.\n");
