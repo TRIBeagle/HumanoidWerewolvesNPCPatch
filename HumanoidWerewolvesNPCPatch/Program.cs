@@ -81,10 +81,20 @@ namespace HumanoidWerewolvesNPCPatch
             // WerewolfBeastRace를 사용하는 NPC의 Race 변경 (HNWMain.esp 이전의 가장 최근 수정된 NPC만 반영)
             var npcsToPatch = state.LoadOrder.PriorityOrder.Npc()
                 .WinningOverrides()
-                .Select(npc => state.LinkCache.ResolveAllContexts<INpc, INpcGetter>(npc.FormKey)
-                    .Where(ctx => state.LoadOrder.IndexOf(ctx.ModKey) < hnwMainIndex) // HNWMain.esp 이전만 포함
-                    .OrderByDescending(ctx => state.LoadOrder.IndexOf(ctx.ModKey)) // 가장 최근 수정된 NPC 선택
-                    .FirstOrDefault()?.Record)
+                .Select(npc =>
+                {
+                    var selectedNpcContext = state.LinkCache.ResolveAllContexts<INpc, INpcGetter>(npc.FormKey)
+                        .Where(ctx => state.LoadOrder.IndexOf(ctx.ModKey) < hnwMainIndex) // HNWMain.esp 이전만 포함
+                        .OrderByDescending(ctx => state.LoadOrder.IndexOf(ctx.ModKey)) // 가장 최근 수정된 NPC 선택
+                        .FirstOrDefault();
+
+                    if (selectedNpcContext != null)
+                    {
+                        Console.WriteLine($"Selected NPC - EditorID: {selectedNpcContext.Record.EditorID}, FormID: {selectedNpcContext.Record.FormKey}, Index: {state.LoadOrder.IndexOf(selectedNpcContext.ModKey)}");
+                    }
+
+                    return selectedNpcContext?.Record;
+                })
                 .Where(npc => npc != null && npc.Race?.FormKey == werewolfBeastRaceKey) // WerewolfBeastRace 사용 NPC 필터
                 .ToList();
 
