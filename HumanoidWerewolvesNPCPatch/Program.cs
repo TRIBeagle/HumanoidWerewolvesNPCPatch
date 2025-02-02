@@ -98,7 +98,7 @@ namespace HumanoidWerewolvesNPCPatch
                 .Where(pair => pair.Item1 != null && pair.Item1.Race?.FormKey == werewolfBeastRaceKey)
                 .ToList();
 
-            Console.WriteLine("NPC selection is complete. Starting the patch process.");
+            Console.WriteLine($"\n{npcsToPatch.Count} NPCs have been selected. Starting the patch process.\n");
 
             foreach (var (npc, npcModKey) in npcsToPatch)
             {
