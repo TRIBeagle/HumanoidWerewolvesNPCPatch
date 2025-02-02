@@ -83,11 +83,6 @@ namespace HumanoidWerewolvesNPCPatch
                 .WinningOverrides()
                 .Select(npc =>
                 {
-                    var firstNpcContext = state.LinkCache.ResolveAllContexts<INpc, INpcGetter>(npc.FormKey)
-                        .OrderBy(ctx => state.LoadOrder.IndexOf(ctx.ModKey))
-                        .FirstOrDefault();
-                    var initialModKey = firstNpcContext?.ModKey ?? npc.FormKey.ModKey;
-                {
                     var selectedNpcContext = state.LinkCache.ResolveAllContexts<INpc, INpcGetter>(npc.FormKey)
                         .Where(ctx => state.LoadOrder.IndexOf(ctx.ModKey) < hnwMainIndex)
                         .OrderByDescending(ctx => state.LoadOrder.IndexOf(ctx.ModKey))
@@ -95,7 +90,7 @@ namespace HumanoidWerewolvesNPCPatch
 
                     if (selectedNpcContext != null && selectedNpcContext.Record.Race?.FormKey == werewolfBeastRaceKey)
                     {
-                        Console.WriteLine($"Selected NPC - EditorID: {selectedNpcContext.Record.EditorID}, FormID: {selectedNpcContext.Record.FormKey}, Initial Mod: {initialModKey}, Last Modified Mod: {selectedNpcContext.ModKey}, Index: {state.LoadOrder.IndexOf(selectedNpcContext.ModKey)}");
+                        Console.WriteLine($"Selected NPC - EditorID: {selectedNpcContext.Record.EditorID}, FormID: {selectedNpcContext.Record.FormKey}, Initial Mod: {npc.FormKey.ModKey}, Last Modified Mod: {selectedNpcContext.ModKey}, Index: {state.LoadOrder.IndexOf(selectedNpcContext.ModKey)}");
                     }
 
                     return selectedNpcContext != null ? (selectedNpcContext.Record, selectedNpcContext.ModKey) : (null, null);
@@ -103,14 +98,13 @@ namespace HumanoidWerewolvesNPCPatch
                 .Where(pair => pair.Item1 != null && pair.Item1.Race?.FormKey == werewolfBeastRaceKey)
                 .ToList();
 
-            Console.WriteLine("\nNPC selection is complete. Starting the patch process.\n");
-            
+            Console.WriteLine("NPC selection is complete. Starting the patch process.");
+
             foreach (var (npc, npcModKey) in npcsToPatch)
             {
                 var patchedNpc = state.PatchMod.Npcs.GetOrAddAsOverride(npc);
                 patchedNpc.Race.SetTo(hnwNpcWerewolfBeastRace.FormKey);
 
-                // NPC EditorID와 FormKey, Index 출력
                 var npcEditorID = npc.EditorID ?? "Unknown EditorID";
                 var npcFormKey = npc.FormKey.ToString();
                 var npcModIndex = state.LoadOrder.IndexOf(npcModKey);
