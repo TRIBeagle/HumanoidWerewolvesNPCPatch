@@ -84,8 +84,8 @@ namespace HumanoidWerewolvesNPCPatch
                 .Select(npc =>
                 {
                     var selectedNpcContext = state.LinkCache.ResolveAllContexts<INpc, INpcGetter>(npc.FormKey)
-                        .Where(ctx => state.LoadOrder.IndexOf(ctx.ModKey) < hnwMainIndex) // HNWMain.esp 이전만 포함
-                        .OrderByDescending(ctx => state.LoadOrder.IndexOf(ctx.ModKey)) // 가장 최근 수정된 NPC 선택
+                        .Where(ctx => state.LoadOrder.IndexOf(ctx.ModKey) < hnwMainIndex)
+                        .OrderByDescending(ctx => state.LoadOrder.IndexOf(ctx.ModKey))
                         .FirstOrDefault();
 
                     if (selectedNpcContext != null && selectedNpcContext.Record.Race?.FormKey == werewolfBeastRaceKey)
@@ -93,23 +93,26 @@ namespace HumanoidWerewolvesNPCPatch
                         Console.WriteLine($"Selected NPC - EditorID: {selectedNpcContext.Record.EditorID}, FormID: {selectedNpcContext.Record.FormKey}, Index: {state.LoadOrder.IndexOf(selectedNpcContext.ModKey)}");
                     }
 
-                    return selectedNpcContext?.Record;
+                    return selectedNpcContext != null ? (selectedNpcContext.Record, selectedNpcContext.ModKey) : (null, null);
                 })
-                .Where(npc => npc != null && npc.Race?.FormKey == werewolfBeastRaceKey) // WerewolfBeastRace 사용 NPC 필터
+                .Where(pair => pair.Item1 != null && pair.Item1.Race?.FormKey == werewolfBeastRaceKey)
                 .ToList();
 
-            foreach (var npc in npcsToPatch)
+            Console.WriteLine("\nNPC selection is complete. Starting the patch process.\n");
+            
+            foreach (var (npc, npcModKey) in npcsToPatch)
             {
                 var patchedNpc = state.PatchMod.Npcs.GetOrAddAsOverride(npc);
                 patchedNpc.Race.SetTo(hnwNpcWerewolfBeastRace.FormKey);
 
-                // NPC EditorID와 FormKey 출력
+                // NPC EditorID와 FormKey, Index 출력
                 var npcEditorID = npc.EditorID ?? "Unknown EditorID";
                 var npcFormKey = npc.FormKey.ToString();
+                var npcModIndex = state.LoadOrder.IndexOf(npcModKey);
 
-                Console.WriteLine($"Patched NPC - EditorID: {npcEditorID}, FormID: {npcFormKey}");
+                Console.WriteLine($"Patched NPC - EditorID: {npcEditorID}, FormID: {npcFormKey}, Patched at Index: {npcModIndex}");
             }
-
+            
             Console.WriteLine($"\nTotal {npcsToPatch.Count} NPCs have been patched.\n");
         }
     }
