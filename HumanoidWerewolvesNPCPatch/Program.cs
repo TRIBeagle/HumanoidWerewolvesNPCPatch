@@ -83,6 +83,11 @@ namespace HumanoidWerewolvesNPCPatch
                 .WinningOverrides()
                 .Select(npc =>
                 {
+                    var firstNpcContext = state.LinkCache.ResolveAllContexts<INpc, INpcGetter>(npc.FormKey)
+                        .OrderBy(ctx => state.LoadOrder.IndexOf(ctx.ModKey))
+                        .FirstOrDefault();
+                    var initialModKey = firstNpcContext?.ModKey ?? npc.FormKey.ModKey;
+                {
                     var selectedNpcContext = state.LinkCache.ResolveAllContexts<INpc, INpcGetter>(npc.FormKey)
                         .Where(ctx => state.LoadOrder.IndexOf(ctx.ModKey) < hnwMainIndex)
                         .OrderByDescending(ctx => state.LoadOrder.IndexOf(ctx.ModKey))
@@ -90,7 +95,7 @@ namespace HumanoidWerewolvesNPCPatch
 
                     if (selectedNpcContext != null && selectedNpcContext.Record.Race?.FormKey == werewolfBeastRaceKey)
                     {
-                        Console.WriteLine($"Selected NPC - EditorID: {selectedNpcContext.Record.EditorID}, FormID: {selectedNpcContext.Record.FormKey}, Index: {state.LoadOrder.IndexOf(selectedNpcContext.ModKey)}");
+                        Console.WriteLine($"Selected NPC - EditorID: {selectedNpcContext.Record.EditorID}, FormID: {selectedNpcContext.Record.FormKey}, Initial Mod: {initialModKey}, Last Modified Mod: {selectedNpcContext.ModKey}, Index: {state.LoadOrder.IndexOf(selectedNpcContext.ModKey)}");
                     }
 
                     return selectedNpcContext != null ? (selectedNpcContext.Record, selectedNpcContext.ModKey) : (null, null);
@@ -110,7 +115,7 @@ namespace HumanoidWerewolvesNPCPatch
                 var npcFormKey = npc.FormKey.ToString();
                 var npcModIndex = state.LoadOrder.IndexOf(npcModKey);
 
-                Console.WriteLine($"Patched NPC - EditorID: {npcEditorID}, FormID: {npcFormKey}, Patched at Index: {npcModIndex}");
+                Console.WriteLine($"Patched NPC - EditorID: {npcEditorID}, FormID: {npcFormKey}, Initial Mod: {npc.FormKey.ModKey}, Last Modified Mod: {npcModKey}, Patched at Index: {npcModIndex}");
             }
             
             Console.WriteLine($"\nTotal {npcsToPatch.Count} NPCs have been patched.\n");
