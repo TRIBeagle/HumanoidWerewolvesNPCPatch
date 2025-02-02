@@ -78,10 +78,27 @@ namespace HumanoidWerewolvesNPCPatch
             hnwNpcWerewolfBeastRace.ArmorRace.SetTo(werewolfBeastRaceKey);
             Console.WriteLine("NPCWerewolfBeastRace EditorID, description, Morph Race, and Armor Race values have been updated.\n");
 
-            // WerewolfBeastRace를 사용하는 NPC의 Race 변경
+            // WerewolfBeastRace를 사용하는 NPC의 Race 변경 (HNWMain.esp 이전의 NPC만 적용)
             var npcsToPatch = state.LoadOrder.PriorityOrder.Npc()
                 .WinningOverrides()
-                .Where(npc => npc.Race?.FormKey == werewolfBeastRaceKey)
+                .Where(npc =>
+                {
+                    // NPC의 원본 Race가 WerewolfBeastRace인지 확인
+                    if (npc.Race?.FormKey != werewolfBeastRaceKey) return false;
+
+                    // NPC의 최종 수정된 플러그인 확인
+                    var npcModIndex = state.LoadOrder.IndexOf(npc.FormKey.ModKey);
+                    if (npcModIndex == -1)
+                    {
+                        Console.WriteLine($"Skipping NPC {npc.EditorID ?? "Unknown"} - ModKey not found in load order.");
+                        return false;
+                    }
+
+                    Console.WriteLine($"Checking NPC: {npc.EditorID ?? "Unknown"}, ModKey: {npc.FormKey.ModKey}, Index: {npcModIndex}");
+
+                    // HNWMain.esp 이전의 NPC만 포함
+                    return npcModIndex < hnwMainIndex;
+                })
                 .ToList();
 
             foreach (var npc in npcsToPatch)
