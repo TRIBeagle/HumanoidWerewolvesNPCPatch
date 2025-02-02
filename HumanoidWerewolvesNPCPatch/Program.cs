@@ -78,27 +78,14 @@ namespace HumanoidWerewolvesNPCPatch
             hnwNpcWerewolfBeastRace.ArmorRace.SetTo(werewolfBeastRaceKey);
             Console.WriteLine("NPCWerewolfBeastRace EditorID, description, Morph Race, and Armor Race values have been updated.\n");
 
-            // WerewolfBeastRace를 사용하는 NPC의 Race 변경 (HNWMain.esp 이전의 NPC만 적용)
+            // WerewolfBeastRace를 사용하는 NPC의 Race 변경 (HNWMain.esp 이전의 가장 최근 수정된 NPC만 반영)
             var npcsToPatch = state.LoadOrder.PriorityOrder.Npc()
                 .WinningOverrides()
-                .Where(npc =>
-                {
-                    // NPC의 원본 Race가 WerewolfBeastRace인지 확인
-                    if (npc.Race?.FormKey != werewolfBeastRaceKey) return false;
-
-                    // NPC의 최종 수정된 플러그인 확인
-                    var npcModIndex = state.LoadOrder.IndexOf(npc.FormKey.ModKey);
-                    if (npcModIndex == -1)
-                    {
-                        Console.WriteLine($"Skipping NPC {npc.EditorID ?? "Unknown"} - ModKey not found in load order.");
-                        return false;
-                    }
-
-                    Console.WriteLine($"Checking NPC: {npc.EditorID ?? "Unknown"}, ModKey: {npc.FormKey.ModKey}, Index: {npcModIndex}");
-
-                    // HNWMain.esp 이전의 NPC만 포함
-                    return npcModIndex < hnwMainIndex;
-                })
+                .Select(npc => state.LinkCache.ResolveAllContexts<INpc, INpcGetter>(npc.FormKey)
+                    .Where(ctx => state.LoadOrder.IndexOf(ctx.ModKey) < hnwMainIndex) // HNWMain.esp 이전만 포함
+                    .OrderByDescending(ctx => state.LoadOrder.IndexOf(ctx.ModKey)) // 가장 최근 수정된 NPC 선택
+                    .FirstOrDefault()?.Record)
+                .Where(npc => npc != null && npc.Race?.FormKey == werewolfBeastRaceKey) // WerewolfBeastRace 사용 NPC 필터
                 .ToList();
 
             foreach (var npc in npcsToPatch)
@@ -106,11 +93,12 @@ namespace HumanoidWerewolvesNPCPatch
                 var patchedNpc = state.PatchMod.Npcs.GetOrAddAsOverride(npc);
                 patchedNpc.Race.SetTo(hnwNpcWerewolfBeastRace.FormKey);
 
-                // NPC EditorID와 FormKey 출력
+                // NPC EditorID와 FormKey, 수정된 Index 출력
                 var npcEditorID = npc.EditorID ?? "Unknown EditorID";
                 var npcFormKey = npc.FormKey.ToString();
+                var npcModIndex = state.LoadOrder.IndexOf(npc.FormKey.ModKey);
 
-                Console.WriteLine($"Patched NPC - EditorID: {npcEditorID}, FormID: {npcFormKey}");
+                Console.WriteLine($"Patched NPC - EditorID: {npcEditorID}, FormID: {npcFormKey}, Patched at Index: {npcModIndex}");
             }
 
             Console.WriteLine($"\nTotal {npcsToPatch.Count} NPCs have been patched.\n");
