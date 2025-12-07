@@ -18,6 +18,9 @@ namespace HumanoidWerewolvesNPCPatch
 
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
+            // ESL 플래그 설
+            state.PatchMod.ModHeader.Flags |= SkyrimModHeader.Flag.LightMaster;
+            
             // FormKey 정의
             var werewolfBeastRaceKey = FormKey.Factory("0CDD84:Skyrim.esm");
             var hnwMainKey = ModKey.FromNameAndExtension("HNWMain.esp");
