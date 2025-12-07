@@ -93,7 +93,7 @@ namespace HumanoidWerewolvesNPCPatch
                         Console.WriteLine($"Selected NPC - EditorID: {selectedNpcContext.Record.EditorID}, FormID: {selectedNpcContext.Record.FormKey}, Last Modified Mod: {selectedNpcContext.ModKey}, Index: {state.LoadOrder.IndexOf(selectedNpcContext.ModKey)}");
                     }
 
-                    return selectedNpcContext != null ? (selectedNpcContext.Record, selectedNpcContext.ModKey) : (null, null);
+                    return selectedNpcContext != null ? (selectedNpcContext.Record, selectedNpcContext.ModKey) : (null, ModKey.Null);
                 })
                 .Where(pair => pair.Item1 != null && pair.Item1.Race?.FormKey == werewolfBeastRaceKey)
                 .ToList();
